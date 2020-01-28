@@ -7,9 +7,9 @@ In this challenge, the applicant will use the Angular CLI to generate a project,
 2) Fork this repository, clone the fork to your computer, open a command prompt, then CD to the repo folder.
 
 3) Using the Angular CLI, generate a new project with the following settings:
-  * Project name: blcchallenge
-  * Use Routing: Yes
-  * CSS Style: SCSS
+   * Project name: blcchallenge
+   * Use Routing: Yes
+   * CSS Style: SCSS
   
  4) Create an application that meets the acceptance criteria of the below user story.
  
