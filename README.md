@@ -26,7 +26,7 @@ As a manager, I need to be able to add, edit, and delete a collection of employe
   * LastName: string (alphabetical only, max 40 chars)
   * Email: string (email format required, max 256 chars)
   
-I will then need to be able to add, edit, and delete an unlimited number of "punches" to each employee. Schema:
+I will then need to be able to add, edit, and delete an unlimited number of "punches" to each employee:
 
 * EmployeePunch
   * Id: number
