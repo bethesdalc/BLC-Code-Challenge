@@ -20,19 +20,19 @@ In this challenge, the applicant will use the Angular CLI to generate a project,
 # User Story
 As a manager, I need to be able to add, edit, and delete a collection of employees:
 
-Employee
-  Id: number
-  FirstName: string (alphabetical only, max 25 chars)
-  LastName: string (alphabetical only, max 40 chars)
-  Email: string (email format required, max 256 chars)
+* Employee
+  * Id: number
+  * FirstName: string (alphabetical only, max 25 chars)
+  * LastName: string (alphabetical only, max 40 chars)
+  * Email: string (email format required, max 256 chars)
   
 I will then need to be able to add, edit, and delete an unlimited number of "punches" to each employee. Schema:
 
-EmployeePunch
-  Id: number
-  Employee: Employee
-  StartTime: Date
-  EndTime: Date
+* EmployeePunch
+  * Id: number
+  * Employee: Employee
+  * StartTime: Date
+  * EndTime: Date
 
 I should not be able to enter a StartTime for a punch that is before a previous punch's EndTime, and the StartTime must come before the punch's EndTime. 
 
