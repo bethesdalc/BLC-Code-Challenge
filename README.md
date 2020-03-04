@@ -48,5 +48,3 @@ All internet resources are available for reference. In a followup interview, the
 Use of third party Angular libraries or components is allowed and encouraged.
 
 Documentation does not need to be extensive as this is just a prototype. However, inline comments clarifying potentially confusing code for other developers is strongly encouraged.
-
-For questions or clarification, create an issue in this repository.
