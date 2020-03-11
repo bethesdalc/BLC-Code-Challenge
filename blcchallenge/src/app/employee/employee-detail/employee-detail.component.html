@@ -1,0 +1,99 @@
+<h1>Employee</h1>
+
+<form novalidate [formGroup]="employeeForm">
+    <div class='card' *ngIf='employee'>
+        <div class='card-header'>
+            {{pageTitle}}
+        </div>
+
+        <div class="card-body">
+            <div class='form-group row'>
+                <div class='col-md-2'>Id:</div>
+                <div class='col-md-8' *ngIf='employee.id === 0'>
+                    Employee Id not yet assigned
+                </div>
+                <div class='col-md-8' *ngIf='employee.id != 0'>
+                    {{employee.id}}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="firstNameId">First Name</label>
+                <div class="col-md-8">
+                    <input class="form-control" id="firstNameId" type="text" placeholder="First Name (required)"
+                        formControlName="firstName" [ngClass]="{'is-invalid': (employeeForm.get('firstName').touched ||
+                                                    employeeForm.get('firstName').dirty) &&
+                                                    !employeeForm.get('firstName').valid }" />
+                    <span class="invalid-feedback">
+                        <span *ngIf="employeeForm.get('firstName').errors?.required">
+                            Please enter your first name.
+                        </span>
+                        <span *ngIf="employeeForm.get('firstName').errors?.maxlength">
+                            The last name must be less than 25 characters.
+                        </span>
+                        <span *ngIf="employeeForm.get('firstName').errors?.pattern">
+                            The first name must only contain alphabetical only characters.
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="lastNameId">Last Name</label>
+                <div class="col-md-8">
+                    <input class="form-control" id="lastNameId" type="text" placeholder="Last Name (required)"
+                        formControlName="lastName" [ngClass]="{'is-invalid': (employeeForm.get('lastName').touched ||
+                                                    employeeForm.get('lastName').dirty) &&
+                                                    !employeeForm.get('lastName').valid }" />
+                    <span class="invalid-feedback">
+                        <span *ngIf="employeeForm.get('lastName').errors?.required">
+                            Please enter your last name.
+                        </span>
+                        <span *ngIf="employeeForm.get('lastName').errors?.maxlength">
+                            The last name must be less than 40 characters.
+                        </span>
+                        <span *ngIf="employeeForm.get('lastName').errors?.pattern">
+                            The last name must only contain alphabetical only characters.
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="emailId">Email</label>
+                <div class="col-md-8">
+                    <input class="form-control" id="emailId" type="text" placeholder="Email Name (required)"
+                        formControlName="email" [ngClass]="{'is-invalid': (employeeForm.get('email').touched ||
+                                                    employeeForm.get('email').dirty) &&
+                                                    !employeeForm.get('email').valid }" />
+                    <span class="invalid-feedback">
+                        <span *ngIf="employeeForm.get('email').errors?.required">
+                            Please enter your email.
+                        </span>
+                        <span *ngIf="employeeForm.get('email').errors?.email">
+                            The email must be a valid format.
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class='card-footer'>
+            <div class="row">
+                <div class="col-md-3">
+                    <button class="btn btn-primary mr-3" (click)="saveEmployee()" style="width:80px"
+                        [title]="employeeForm.valid ? 'Save your entered data' : 'Disabled until the form data is valid'"
+                        [disabled]="!employeeForm.valid">
+                        Save
+                    </button>
+                </div>
+                <div class='col-md-3' *ngIf='employee.id != 0'>
+                    <button class="btn btn-danger" (click)="deleteEmployee()">Delete Employee</button>
+                </div>
+                <div class='col-md-3'>
+                    <button class="btn btn-primary" (click)="employeeList()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

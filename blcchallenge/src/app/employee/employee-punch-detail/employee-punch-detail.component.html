@@ -1,0 +1,78 @@
+<h1>Employee Punch</h1>
+
+<form novalidate [formGroup]="employeePunchForm">
+    <div class='card' *ngIf='employeePunch'>
+        <div class='card-header'>
+            {{ employeePunch.employee.firstName }} {{ employeePunch.employee.lastName }} - {{pageTitle}}
+        </div>
+
+        <div class='card-body'>
+            <div class='form-group row'>
+                <div class='col-md-2'>Id:</div>
+                <div class='col-md-8' *ngIf='employeePunch.id === 0'>
+                    Employee Punch Id not yet assigned
+                </div>
+                <div class='col-md-8' *ngIf='employeePunch.id != 0'>
+                    {{employeePunch.id}}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="startTimeId">Start Time</label>
+                <div class="col-md-8">
+                    <input class="form-control" id="startTimeDateID" type="datetime-local" formControlName="startTime"
+                        [ngClass]="{'is-invalid': (employeePunchForm.get('startTime').touched ||
+                                employeePunchForm.get('startTime').dirty) &&
+                                !employeePunchForm.get('startTime').valid }" />
+
+                    <span class="invalid-feedback">
+                        <span *ngIf="employeePunchForm.get('startTime').errors?.required">
+                            Please enter your start time.
+                        </span>
+                        <span *ngIf="employeePunchForm.get('startTime').errors?.dateValidate">
+                            Start Time Begins before another punches end time.
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="endTimeId">End Time</label>
+                <div class="col-md-8">
+                    <input class="form-control" id="endTimeDateID" type="datetime-local" formControlName="endTime"
+                        [ngClass]="{'is-invalid': (employeePunchForm.get('endTime').touched ||
+                                employeePunchForm.get('endTime').dirty) &&
+                                !employeePunchForm.get('endTime').valid }" />
+
+                    <span class="invalid-feedback">
+                        <span *ngIf="employeePunchForm.get('endTime').errors?.required">
+                            Please enter your start time.
+                        </span>
+                        <span *ngIf="employeePunchForm.get('endTime').errors?.dateValidate">
+                            End Time is before Start Time
+                        </span> 
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class='card-footer'>
+            <div class='row'>
+                <div class="col-md-3">
+                    <button class="btn btn-success mr-3" (click)="savePunch()" style="width:80px"
+                        [title]="employeePunchForm.valid ? 'Save your entered data' : 'Disabled until the form data is valid'"
+                        [disabled]="!employeePunchForm.valid">
+                        Save
+                    </button>
+                </div>
+                <div class='col-sm-3' *ngIf='employeePunch.id != 0'>
+                    <button class="btn btn-danger" (click)="deletePunch()">Delete Punch</button>
+                </div>
+                <div class='col-sm-3'>
+                    <button class="btn btn-primary" (click)="employeePunchList()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
