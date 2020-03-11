@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { EmployeePunchRepositoryService } from '../../services/employee-punch-repository.service';
 import { EmployeeRepositoryService } from '../../services/employee-repository.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, Data } from '@angular/router';
 import { IEmployeePunch } from '../models/iEmployeePunch';
 import { IEmployee } from '../models/iEmployee';
 import { FormGroup, FormBuilder, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 
 import { DateValidators } from '../../shared/date.validator';
+
 
 @Component({
   selector: 'app-employee-punch-detail',
@@ -17,6 +18,9 @@ import { DateValidators } from '../../shared/date.validator';
 export class EmployeePunchDetailComponent implements OnInit {
   employeePunchForm: FormGroup;
   employeePunch: IEmployeePunch;
+  employee: IEmployee;
+
+  latestPreviousEndTime: Date = null;
 
   employeePunches: IEmployeePunch[];
   filteredEmployeePunches: IEmployeePunch[];
@@ -32,76 +36,30 @@ export class EmployeePunchDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupEmployeePunchForm();
+
     let id = +this.route.snapshot.paramMap.get('id');
     let employeeid = +this.route.snapshot.paramMap.get('employeeid');
 
-    if (id === 0) {
-      this.getNewEmployeePunch(id, employeeid);
-      // For new punches we set the start time validation date/time of the latest end punch time
-      // For existing punches, we cannot set this validation. It would prevent updating the start time on any 
-      // older punches.  
-      // TODO: Discuss how to handle editing a previous punch after a later punch has been entered.  
-      this.setStartTimeValidationDate(id, employeeid);
-    } 
-    else {
-      this.getExistingEmployeePunch(id);
-    }
-  }
+    this.employeeRepositoryService.getById(employeeid).subscribe((employeeData: IEmployee) => {
+      this.employee = employeeData;
 
-  getExistingEmployeePunch(id: number): void {
-    this.employeePunchRepositoryService.getById(id).subscribe((data: IEmployeePunch) => {
-      this.employeePunch = data;
-      this.displayEmployeePunch(data);
-    })
-  }
+      this.employeePunchRepositoryService.getById(id).subscribe((punchData: IEmployeePunch) => {
+        this.employeePunch = punchData;
 
-  getNewEmployeePunch(id: number, employeeid: number): void {
-    this.employeeRepositoryService.getById(employeeid).subscribe((data: IEmployee) => {
-      var employee = data;
-      this.employeePunchRepositoryService.getById(id).subscribe((data: IEmployeePunch) => {
-        data.employee = employee;
-        this.displayEmployeePunch(data);
-      })
-    })
-  }
-
-  setStartTimeValidationDate(id :number, employeeid: number): void {
-    this.employeePunchRepositoryService.getAll().subscribe((data: IEmployeePunch[]) => {
-      //Get all punches and filter by current employee.
-      this.employeePunches = data;
-      this.filteredEmployeePunches = this.performEmployeeFilter(employeeid);
-
-      // Set the latestPunch time by 
-      var latestPunchTime: Date = null;
-
-      // Loop through all employee punches to determine the latest end time entered
-      // If a punch time is null, do not evaluate that punch.  this shouldnt happen as we should not 
-      // be able to create a punch if there are any punches with an end time null
-      
-      for (var punch of this.filteredEmployeePunches) {
-        if (punch.endTime != null) {
-          if (latestPunchTime) {
-            if (punch.endTime > latestPunchTime) {
-              latestPunchTime = punch.endTime;
-            }
-          }
-          else {
-            latestPunchTime = punch.endTime;
-          }
+        if (id === 0) {
+          this.employeePunch.employee = this.employee;
         }
-      }
 
-      //Convert for the dateValidator
-      latestPunchTime = new Date(latestPunchTime);
-      this.setStartTimeValidator(latestPunchTime);
+        this.displayEmployeePunch();
+      })
     })
   }
 
   setupEmployeePunchForm(): void {
     //Setup Base Form
     this.employeePunchForm = this.fb.group({
-      startTime: ['', Validators.required],
-      endTime: [''],
+      startTime: [null, Validators.required],
+      endTime: [null],
     });
 
     //Add watch for start time changes and update end time validator
@@ -110,27 +68,10 @@ export class EmployeePunchDetailComponent implements OnInit {
     });
   }
 
-  setStartTimeValidator(newCheckTime: Date): void {
-    const startTimeControl = this.employeePunchForm.get('StartTime');
-    startTimeControl.setValidators([Validators.required, DateValidators.dateValidate(newCheckTime)]);
-    startTimeControl.updateValueAndValidity();
-  }
-
-  setEndTimeValidator(newCheckTime: Date): void {
-    const endTimeControl = this.employeePunchForm.get('endTime');
-    endTimeControl.setValidators(DateValidators.dateValidate(newCheckTime));
-    endTimeControl.updateValueAndValidity();
-  }
-
-  performEmployeeFilter(id: number): IEmployeePunch[] {
-    return this.employeePunches.filter((employeePunch: IEmployeePunch) => employeePunch.employee.id === id);
-  }
-
-  displayEmployeePunch(employeePunch: IEmployeePunch): void {
+  displayEmployeePunch(): void {
     if (this.employeePunchForm) {
       this.employeePunchForm.reset();
     }
-    this.employeePunch = employeePunch;
 
     if (this.employeePunch.id === 0) {
       this.pageTitle = 'Add Employee Punch';
@@ -143,6 +84,67 @@ export class EmployeePunchDetailComponent implements OnInit {
       startTime: this.employeePunch.startTime,
       endTime: this.employeePunch.endTime
     });
+
+    this.setStartTimeValidationDate();
+  }
+
+  setStartTimeValidationDate(): void {
+    this.employeePunchRepositoryService.getAll().subscribe((data: IEmployeePunch[]) => {
+
+      //Get all punches and filter by current employee.
+      this.employeePunches = data;
+
+      //Filter by current employee.
+      this.filteredEmployeePunches = this.performEmployeeFilter(this.employeePunch.employee.id);
+
+      console.log(this.filteredEmployeePunches)
+
+      // if we have punches to evaluate 
+      if (this.filteredEmployeePunches.length > 0) {
+        // sort punches by end date
+        this.filteredEmployeePunches.sort((a, b) => new Date(a.endTime).getTime() - new Date(b.endTime).getTime());
+
+        // If this is a new punch, get the last punches end time.
+        if (this.employeePunch.id === 0 && this.filteredEmployeePunches.length > 0) {
+          this.latestPreviousEndTime = this.filteredEmployeePunches[this.filteredEmployeePunches.length - 1].endTime;
+        }
+        else {
+          for (var punch of this.filteredEmployeePunches) {
+            // Evaluate punch if not current punch
+            if (punch.id != this.employeePunch.id) {
+              // Initialize with the first punch not equal to the punch being edited
+              if (this.latestPreviousEndTime === null) {
+                this.latestPreviousEndTime = punch.endTime;
+              }
+
+              // if the end time is greater than the current end time and start time isnt after current punch start time
+              if (punch.endTime > this.latestPreviousEndTime && punch.startTime < this.employeePunch.startTime) {
+                this.latestPreviousEndTime = punch.endTime;
+              }
+            }
+
+          }
+        }
+      }
+      console.log(this.latestPreviousEndTime);
+      this.setStartTimeValidator(this.latestPreviousEndTime);
+    })
+  }
+
+  setStartTimeValidator(newCheckTime: Date): void {
+    const startTimeControl = this.employeePunchForm.get('startTime');
+    startTimeControl.setValidators([Validators.required, DateValidators.dateValidate(newCheckTime)]);
+    startTimeControl.updateValueAndValidity();
+  } 
+  
+  setEndTimeValidator(newCheckTime: Date): void {
+    const endTimeControl = this.employeePunchForm.get('endTime');
+    endTimeControl.setValidators(DateValidators.dateValidate(newCheckTime));
+    endTimeControl.updateValueAndValidity();
+  }
+
+  performEmployeeFilter(id: number): IEmployeePunch[] {
+    return this.employeePunches.filter((employeePunch: IEmployeePunch) => employeePunch.employee.id === id && employeePunch.endTime != null);
   }
 
   public savePunch() {
@@ -150,6 +152,8 @@ export class EmployeePunchDetailComponent implements OnInit {
       if (this.employeePunchForm.dirty) {
         // update the employee object with values from the form
         const empPunch = { ...this.employeePunch, ...this.employeePunchForm.value };
+
+        console.log(empPunch);
 
         if (empPunch.id === 0) {
           this.employeePunchRepositoryService.create(empPunch).subscribe((ret) => {

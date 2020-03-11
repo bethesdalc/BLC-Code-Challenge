@@ -92,6 +92,7 @@ export class EmployeeDetailComponent implements OnInit {
       this.onSaveComplete();
     } else {
       if (confirm(`Really delete the employee: ${this.employee.id}?`)) {
+        this.deleteEmployeePunches();
         this.employeeRepositoryService.delete(this.employee.id).subscribe((ret) => {
           this.employeeRepositoryService.saveToLocal();
           this.onSaveComplete();

@@ -31,7 +31,7 @@ export class DataService implements InMemoryDbService {
     else {
       employees = [
         { id: 1, firstName: 'Gordon', lastName: 'Huebner', email: 'ghuebner@outlook.com' },
-        { id: 2, firstName: 'Mark', lastName: 'Miers', email: 'Mark.Miers@bethesdalc.org' },
+        { id: 2, firstName: 'Mark', lastName: 'Miers', email: 'mark.miers@bethesdalc.org' },
         { id: 3, firstName: 'Angela', lastName: 'Stuecken', email: 'angela.stuecken@bethesdalc.org' },
       ];
 
@@ -39,14 +39,13 @@ export class DataService implements InMemoryDbService {
     }
 
     // if there was local storage, parse the data into the employee punches into InMemoryDB
-    // otherwise create an empty array for punches
+    // otherwise create a base object upon startup
     if (employeePunchesJson) {
       employeePunches = JSON.parse(employeePunchesJson)
     }
     else {
       employeePunches = [
-        { id: 1, startTime: new Date(), endTime: new Date(), employee: employees[0] },
-
+        { id: 1, startTime: null, endTime: null, employee: employees[0] },
       ];
 
       localStorage.setItem('employeePunchTable', JSON.stringify(employeePunches));
