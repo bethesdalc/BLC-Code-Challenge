@@ -1,0 +1,41 @@
+<h1>Employee Punches</h1>
+
+<div class='card' *ngIf='employee'>
+
+  <div class='card-header'>
+    {{ employee.firstName }} {{ employee.lastName }}
+  </div>
+
+  <div class='card-body'>
+    <div class='table-responsive'>
+      <table class='table' *ngIf='filteredEmployeePunches && filteredEmployeePunches.length'>
+        <tr>
+          <th></th>
+          <th>Punch Number</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+        </tr>
+        <tr *ngFor="let employeePunch of filteredEmployeePunches">
+          <td>
+            <button class="btn btn-primary" (click)="editPunch(employeePunch.id)">Edit Punch</button>
+          </td>
+          <td>{{ employeePunch.id }}</td>
+          <td>{{ employeePunch.startTime | date :'MM/dd/yyyy HH:mm:ss'}}</td>
+          <td>{{ employeePunch.endTime | date :'MM/dd/yyyy HH:mm:ss' }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class='card-footer'>
+    <div class='row'>
+      <div class='col-md-3'  *ngIf='canAddPunch'>
+        <button class="btn btn-success" (click)="addPunch()">Add New Employee Punch</button>
+      </div>
+      <div class='col-md-3'>
+        <button class="btn btn-primary" (click)="employeeList()">Employee List</button>
+      </div>
+    </div>
+  </div>
+  
+</div>

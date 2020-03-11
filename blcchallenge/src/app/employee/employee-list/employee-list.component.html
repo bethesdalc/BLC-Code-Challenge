@@ -1,0 +1,40 @@
+<h1>Employees</h1>
+
+<div class='card'>
+
+  <div class='card-header'>
+    Bethesda Employees
+  </div>
+
+  <div class='card-body'>
+    <div class='table-responsive'>
+      <table class='table' *ngIf='employees && employees.length'>
+        <tr>
+          <th></th>
+          <th></th>
+          <th>Employee Id</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+        </tr>
+        <tr *ngFor="let employee of employees">
+          <td>
+            <button class="btn btn-primary" (click)="editEmployee(employee.id)">Edit Employee</button>
+          </td>
+          <td>
+            <button class="btn btn-primary" (click)="employeePunch(employee.id)">Employee Punches</button>
+          </td>
+          <td>{{ employee.id }}</td>
+          <td>{{ employee.firstName }}</td>
+          <td>{{ employee.lastName }}</td>
+          <td>{{ employee.email }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class='card-footer'>
+    <button class="btn btn-success" (click)="addEmployee()">Create New Employee</button>
+  </div>
+  
+</div>
