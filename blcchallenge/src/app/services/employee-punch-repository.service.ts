@@ -48,7 +48,7 @@ export class EmployeePunchRepositoryService implements IRepositoryService {
     })
   }
 
-  private initializeEmployeePunch(): IEmployeePunch {
+  public initializeEmployeePunch(): IEmployeePunch {
     // Return an initialized object
     return {
       id: 0,

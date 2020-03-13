@@ -16,4 +16,9 @@ describe('EmployeeRepositoryService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('should intiialize new employee', () => {
+    var employee = service.initializeEmployee();
+    expect(employee.id).toBe(0);
+  });
 });

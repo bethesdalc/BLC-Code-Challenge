@@ -15,4 +15,9 @@ describe('EmployeePunchRepositoryService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('should intiialize new punch', () => {
+    var employeePunch = service.initializeEmployeePunch();
+    expect(employeePunch.id).toBe(0);
+  });
 });

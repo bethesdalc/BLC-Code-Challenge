@@ -9,7 +9,8 @@ export class DateValidators {
       var enteredDate = new Date(c.value);
       var checkDate = new Date(minDate);
 
-      if (c.value && (isDate(c.value) || enteredDate <= checkDate)) {
+//      if (c.value && (isDate(c.value) || enteredDate <= checkDate)) {
+      if (c.value && (enteredDate <= checkDate)) {
         return { dateValidate: true };
       }
       return null;

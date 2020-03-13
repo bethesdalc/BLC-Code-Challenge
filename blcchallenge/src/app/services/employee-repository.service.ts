@@ -48,7 +48,7 @@ export class EmployeeRepositoryService implements IRepositoryService {
     })
   }
 
-  private initializeEmployee(): IEmployee {
+  public initializeEmployee(): IEmployee {
     // Return an initialized object
     return {
       id: 0,

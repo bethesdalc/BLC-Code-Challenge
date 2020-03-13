@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { EmployeePunchRepositoryService } from '../../services/employee-punch-repository.service';
 import { EmployeeRepositoryService } from '../../services/employee-repository.service';
-import { ActivatedRoute, Router, Data } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IEmployeePunch } from '../models/iEmployeePunch';
 import { IEmployee } from '../models/iEmployee';
-import { FormGroup, FormBuilder, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators} from '@angular/forms';
 
 import { DateValidators } from '../../shared/date.validator';
 
@@ -97,8 +97,6 @@ export class EmployeePunchDetailComponent implements OnInit {
       //Filter by current employee.
       this.filteredEmployeePunches = this.performEmployeeFilter(this.employeePunch.employee.id);
 
-      console.log(this.filteredEmployeePunches)
-
       // if we have punches to evaluate 
       if (this.filteredEmployeePunches.length > 0) {
         // sort punches by end date
@@ -126,7 +124,6 @@ export class EmployeePunchDetailComponent implements OnInit {
           }
         }
       }
-      console.log(this.latestPreviousEndTime);
       this.setStartTimeValidator(this.latestPreviousEndTime);
     })
   }
@@ -152,8 +149,6 @@ export class EmployeePunchDetailComponent implements OnInit {
       if (this.employeePunchForm.dirty) {
         // update the employee object with values from the form
         const empPunch = { ...this.employeePunch, ...this.employeePunchForm.value };
-
-        console.log(empPunch);
 
         if (empPunch.id === 0) {
           this.employeePunchRepositoryService.create(empPunch).subscribe((ret) => {
